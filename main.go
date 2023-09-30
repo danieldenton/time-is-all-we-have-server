@@ -30,6 +30,7 @@ func taskByName(c *gin.Context) {
 	task, err := getTaskByName(name)
 
 	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Task not found"})
 		return
 	}
 	c.IndentedJSON(http.StatusOK, task)
