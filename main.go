@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -24,6 +25,25 @@ func getTasks(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, tasks)
 }
 
+func taskByName(c *gin.Context) {
+	name := c.Param("name")
+	task, err := getTaskByName(name)
+
+	if err != nil {
+		return
+	}
+	c.IndentedJSON(http.StatusOK, task)
+}
+
+func getTaskByName(name string) (*task, error) {
+	for i, t := range tasks {
+		if t.Name == name {
+			return &tasks[i], nil
+		}
+	}
+	return nil, errors.New("task not found")
+}
+
 func createTask(c *gin.Context) {
 	var newTask task
 
@@ -39,5 +59,6 @@ func main() {
 	router := gin.Default()
 	router.GET("/tasks", getTasks)
 	router.POST("/tasks", createTask)
+	router.GET("/tasks/:name", taskByName)
 	router.Run("localhost:8080")
 }
