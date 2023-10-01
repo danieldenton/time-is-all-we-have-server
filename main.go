@@ -8,17 +8,18 @@ import (
 )
 
 type task struct {
-	ID      int    `json: "id"`
-	Name    string `json: "task"`
-	Time    string `json: "time"`
-	Minutes int    `json: "minutes"`
+	ID        int    `json: "id"`
+	Name      string `json: "task"`
+	Time      string `json: "time"`
+	Minutes   int    `json: "minutes"`
+	Completed bool   `json: "completed"`
 }
 
 var tasks = []task{
-	{ID: 1, Name: "meditaion", Time: "10:00 am", Minutes: 30},
-	{ID: 2, Name: "bjj", Time: "11:45 am", Minutes: 120},
-	{ID: 3, Name: "work", Time: "2:00 pm", Minutes: 240},
-	{ID: 4, Name: "study", Time: "7:00 pm", Minutes: 90},
+	{ID: 1, Name: "meditaion", Time: "10:00 am", Minutes: 30, Completed: false},
+	{ID: 2, Name: "bjj", Time: "11:45 am", Minutes: 120, Completed: false},
+	{ID: 3, Name: "work", Time: "2:00 pm", Minutes: 240, Completed: false},
+	{ID: 4, Name: "study", Time: "7:00 pm", Minutes: 90, Completed: false},
 }
 
 func getTasks(c *gin.Context) {
@@ -33,6 +34,28 @@ func taskByName(c *gin.Context) {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Task not found"})
 		return
 	}
+	c.IndentedJSON(http.StatusOK, task)
+}
+
+func completeTask(c *gin.Context) {
+	name, ok := c.GetQuery("name")
+
+	if ok == false {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Missing name quesry parameter."})
+		return
+	}
+
+	task, err := getTaskByName(name)
+
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Task not found"})
+	}
+
+	if task.Completed == true {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Task already completed"})
+	}
+
+	task.Completed = true
 	c.IndentedJSON(http.StatusOK, task)
 }
 
