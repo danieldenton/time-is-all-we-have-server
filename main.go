@@ -16,7 +16,7 @@ type task struct {
 }
 
 var tasks = []task{
-	{ID: 1, Name: "meditaion", Time: "10:00 am", Minutes: 30, Completed: false},
+	{ID: 1, Name: "meditation", Time: "10:00 am", Minutes: 30, Completed: false},
 	{ID: 2, Name: "bjj", Time: "11:45 am", Minutes: 120, Completed: false},
 	{ID: 3, Name: "work", Time: "2:00 pm", Minutes: 240, Completed: false},
 	{ID: 4, Name: "study", Time: "7:00 pm", Minutes: 90, Completed: false},
@@ -40,7 +40,7 @@ func taskByName(c *gin.Context) {
 func completeTask(c *gin.Context) {
 	name, ok := c.GetQuery("name")
 
-	if ok == false {
+	if !ok {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "Missing name quesry parameter."})
 		return
 	}
@@ -84,5 +84,6 @@ func main() {
 	router.GET("/tasks", getTasks)
 	router.POST("/tasks", createTask)
 	router.GET("/tasks/:name", taskByName)
+	router.PATCH("/complete", completeTask)
 	router.Run("localhost:8080")
 }
