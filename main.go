@@ -82,8 +82,12 @@ func createTask(c *gin.Context) {
 func main() {
 	router := gin.Default()
 	router.GET("/tasks", getTasks)
+	// curl localhost:8080/tasks
 	router.POST("/tasks", createTask)
+	// curl localhost:8080/tasks --include --header "Content-Type: application/json" -d @body.json --request "POST"
 	router.GET("/tasks/:name", taskByName)
+	//  curl localhost:8080/tasks/bjj
 	router.PATCH("/complete", completeTask)
+	// curl localhost:8080/complete\?name=meditation --request "PATCH"
 	router.Run("localhost:8080")
 }
